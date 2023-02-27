@@ -15,17 +15,17 @@ async function main() {
     const verifier = await Verifier.deploy();
     console.log(`Verifier address: ${verifier.address}`)
 
-    const ZKTreeVote = await ethers.getContractFactory("ZKTreeVote");
-    const zktreevote = await ZKTreeVote.deploy(TREE_LEVELS, mimcsponge.address, verifier.address, 4);
-    console.log(`ZKTreeVote address: ${zktreevote.address}`)
+    const ZKVote = await ethers.getContractFactory("ZKVote");
+    const zkvote = await ZKVote.deploy(TREE_LEVELS, mimcsponge.address, verifier.address, 4);
+    console.log(`ZKVote address: ${zkvote.address}`)
 
     // add the 2nd hardhat account as a validator
-    await zktreevote.registerValidator(signers[1].address)
+    await zkvote.registerValidator(signers[1].address)
 
     fs.writeFileSync("static/contracts.json", JSON.stringify({
         mimc: mimcsponge.address,
         verifier: verifier.address,
-        zktreevote: zktreevote.address
+        zkvote: zkvote.address
     }))
 }
 

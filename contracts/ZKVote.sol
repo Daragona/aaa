@@ -1,32 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "../zk-merkle-tree/contracts/ZKTree.sol";
+import "../node_modules/zk-merkle-tree/contracts/ZKTree.sol";
 
 contract ZKVote is ZKTree {
     address public owner;
     mapping(address => bool) public validators;
+    mapping(address => bool) public whitelist;
     mapping(uint256 => bool) uniqueHashes;
-    mapping(int => int) voti;
+    mapping(uint => uint) voti;
     
-    int numOptions;
+    uint numOptions;
 
-    constructor(uint32 _levels, IHasher _hasher, IVerifier _verifier, int _numOptions) 
+    constructor(uint32 _levels, IHasher _hasher, IVerifier _verifier, uint _numOptions) 
     ZKTree(_levels, _hasher, _verifier) {
         owner = msg.sender; //msg.sender = chi sta usando il contratto
         numOptions = _numOptions; 
-        for (int i = 0; i <= numOptions; i++) voti[i] = 0;
-    }    
+        for (uint i = 0; i <= numOptions; i++) voti[i] = 0;
+    }
     
     
+    function registerWhitelist(address _voter) external {
+        require(validators[msg.sender], "Only validators can add to white list!");
+        whitelist[_voter] = true;
+    }
     function registerValidator(address _validator) external {
         require(msg.sender == owner, "Only owner can add validator!");
         validators[_validator] = true;
     }
 
-
     //registra il commitment (metodo '_commit')
-    function registerCommitment(uint256 _hash,uint256 _commitment) external {
+    function registerCommitment(uint256 _hash,uint256 _commitment, address _voter) external {
+        require(whitelist[_voter], "Non sei in whitelist fra");
         //controlla che chi sta committando sia un validatore
         require(validators[msg.sender], "Only validator can commit!"); 
         //controlla che questo hash NON sia già stato usato
@@ -37,7 +42,7 @@ contract ZKVote is ZKTree {
     }
 
     //registra il voto (metodo '_nullify')
-    function vote(uint256 _nullifier, uint256 _root, int _option, 
+    function vote(uint256 _nullifier, uint256 _root, uint _option, 
         uint[2] memory _proof_a, uint[2][2] memory _proof_b, uint[2] memory _proof_c
     ) external {
         //verifica opzione valida
@@ -49,7 +54,7 @@ contract ZKVote is ZKTree {
     }
 
     //get del numero di voti
-    function getVoti(int _option) external view returns (int) {
+    function getVoti(uint _option) external view returns (uint) {
         return voti[_option];
     }
         
