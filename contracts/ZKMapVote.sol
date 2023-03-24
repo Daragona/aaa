@@ -6,16 +6,23 @@ import "./ZKVote.sol";
 contract ZKMapVote{ 
 
     mapping (uint => ZKVote) votazioni;
+    mapping (uint => string) titoli;
     uint numVotazioni;
 
     constructor(){
-
+        numVotazioni=0;
     }
 
-    function newVotation(uint32 _levels, IHasher _hasher, IVerifier _verifier, uint _numOptions) 
+    function newVotation(uint32 _levels, IHasher _hasher, IVerifier _verifier, string memory _title, uint _numOption, string[10] memory _options) 
     external {
-        votazioni[numVotazioni]=new ZKVote(_levels, _hasher, _verifier, _numOptions);
+        votazioni[numVotazioni]=new ZKVote(_levels, _hasher, _verifier,_title, _numOption, _options);
+        titoli[numVotazioni]=_title;
         numVotazioni++;
+    }
+
+    function getVotation(uint _idVoto)
+    view external returns(address){
+        return address(votazioni[_idVoto]);
     }
 
     function registerOneWhitelist(uint _idVoto,address _voter)
@@ -44,10 +51,26 @@ contract ZKMapVote{
         votazioni[_idVoto].vote(_nullifier, _root, _option, _proof_a, _proof_b, _proof_c);
     }
 
-    function getVotiOne(uint _idVoto, uint _option)
-    external view returns (uint){    
+    function getInfoVotation(uint _idVoto)
+    external view returns (uint[] memory, string[] memory, string memory){
+        return (votazioni[_idVoto].getVoti(), votazioni[_idVoto].getOptions(), votazioni[_idVoto].getTitle());
+
+    }
+    
+    function getOneVoti(uint _idVoto)
+    external view returns (uint[] memory){    
         
         require(_idVoto<numVotazioni, "Votation ID not exists");
-        return votazioni[_idVoto].getVoti(_option);
+        return votazioni[_idVoto].getVoti();
+    }
+
+    function getOneOptions(uint _idVoto)
+    external view returns (string[] memory){
+        return votazioni[_idVoto].getOptions();
+    }
+
+    function getOneTitle(uint _idVoto)
+    external view returns (string memory){
+        return votazioni[_idVoto].getTitle();
     }
 }

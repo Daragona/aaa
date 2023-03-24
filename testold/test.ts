@@ -25,7 +25,7 @@ describe("ZKVote Smart contract test", () => {
         const Verifier = await ethers.getContractFactory("Verifier");
         const verifier = await Verifier.deploy();
         const ZKVote = await ethers.getContractFactory("ZKVote");
-        zkvote = await ZKVote.deploy(TREE_LEVELS, mimcsponge.address, verifier.address, 4);
+        zkvote = await ZKVote.deploy(TREE_LEVELS, mimcsponge.address, verifier.address,"daje", 4, "Daje");
 
         console.log(mimcsponge.address,",",verifier.address)
         await zkvote.registerValidator(signers[1].getAddress())

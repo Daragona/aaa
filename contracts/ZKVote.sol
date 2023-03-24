@@ -9,13 +9,19 @@ contract ZKVote is ZKTree {
     mapping(address => bool) public whitelist;
     mapping(uint256 => bool) uniqueHashes;
     mapping(uint => uint) voti;
-    
+    mapping(uint => string) optionsText;
+    string title;
     uint numOptions;
 
-    constructor(uint32 _levels, IHasher _hasher, IVerifier _verifier, uint _numOptions) 
+    constructor(uint32 _levels, IHasher _hasher, IVerifier _verifier, string memory _title, uint _numOptions, string[10] memory opzioni) 
     ZKTree(_levels, _hasher, _verifier) {
         owner = msg.sender; //msg.sender = chi sta usando il contratto
-        numOptions = _numOptions; 
+        validators[owner]=true;
+        title=_title;
+
+        numOptions=_numOptions;
+        for(uint i=0;i<=numOptions;i++)
+            optionsText[i]=opzioni[i];
         for (uint i = 0; i <= numOptions; i++) voti[i] = 0;
     }
     
@@ -39,6 +45,7 @@ contract ZKVote is ZKTree {
         //effettua il commit, se non è stato già usato e se viene effettuata la transazione correttamente
         _commit(bytes32(_commitment));
         uniqueHashes[_hash] = true;
+        whitelist[_voter]=false;
     }
 
     //registra il voto (metodo '_nullify')
@@ -54,8 +61,24 @@ contract ZKVote is ZKTree {
     }
 
     //get del numero di voti
-    function getVoti(uint _option) external view returns (uint) {
-        return voti[_option];
+    function getVoti() external view returns (uint[] memory) {
+        uint[] memory tmp=new uint[](numOptions);
+        for(uint i=0;i<numOptions;i++)
+            tmp[i]=voti[i];
+        return tmp;
+    }
+
+    function getOptions() 
+    external view returns (string[] memory){
+        string[] memory tmp=new string[](numOptions);
+        for(uint i=0;i<numOptions;i++)
+            tmp[i]=optionsText[i];
+        return tmp;
+
     }
         
+    function getTitle()
+    external view returns (string memory){
+        return title;
+    }
 }
