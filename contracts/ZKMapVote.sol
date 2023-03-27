@@ -51,12 +51,6 @@ contract ZKMapVote{
         votazioni[_idVoto].vote(_nullifier, _root, _option, _proof_a, _proof_b, _proof_c);
     }
 
-    function getInfoVotation(uint _idVoto)
-    external view returns (uint[] memory, string[] memory, string memory){
-        return (votazioni[_idVoto].getVoti(), votazioni[_idVoto].getOptions(), votazioni[_idVoto].getTitle());
-
-    }
-    
     function getOneVoti(uint _idVoto)
     external view returns (uint[] memory){    
         
@@ -73,4 +67,11 @@ contract ZKMapVote{
     external view returns (string memory){
         return votazioni[_idVoto].getTitle();
     }
+
+    function getNumVotazioni()
+    view external returns(uint){
+        return numVotazioni;
+
+    }
+
 }

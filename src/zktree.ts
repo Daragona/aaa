@@ -3,7 +3,7 @@
 import * as crypto from 'crypto'
 const snarkjs = require('snarkjs')
 //import * as snarkjs from 'snarkjs'
-const circomlibjs=require('circomlibjs')
+import circomlibjs from 'circomlibjs';
 //import { buildMimcSponge } from 'circomlibjs'
 import { PromiseOrValue } from "../typechain-types/common";
 import { BigNumberish, BigNumber, Contract } from "ethers";
@@ -19,9 +19,7 @@ export function getVerifierWASM() {
 function calculateHash(mimc: { F: { toString: (arg0: any) => any; }; multiHash: (arg0: any[]) => any; }, left: any, right: any) {
     return BigNumber.from(mimc.F.toString(mimc.multiHash([left, right])))
 }
-export async function porcodio(){
-    console.log("porcodio");
-}
+
 export async function generateCommitment() {
     const mimc = await circomlibjs.buildMimcSponge();
     const nullifier = BigNumber.from(crypto.randomBytes(31)).toString()
