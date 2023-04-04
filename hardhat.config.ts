@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {},
     sepolia: {
-      url: "https://eth-sepolia.g.alchemy.com/v2/ZTXANrAN2uV6OeDKOhRfZNahE3dcEcfP",
+      url: "https://sepolia.infura.io/v3/1caadfe504ce4531b041de4bc8927ceb",
       accounts: [`0x${"2fb76d17350947ea1a658742b5b5113cdc34b897f89f53f47160da3bd8d4d88c"}`]
     }
   }

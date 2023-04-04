@@ -69,7 +69,7 @@ contract ZKMapVote{
     }
 
     function getNumVotazioni()
-    view external returns(uint){
+    external view returns(uint){
         return numVotazioni;
 
     }
